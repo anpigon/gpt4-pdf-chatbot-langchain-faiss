@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, Fragment } from 'react';
 import Layout from '@/components/layout';
 import styles from '@/styles/Home.module.css';
 import { Message } from '@/types/chat';
@@ -147,133 +147,128 @@ export default function Home() {
   };
 
   return (
-    <>
-      <Layout>
-        <div className="mx-auto flex flex-col gap-4">
-          <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-            Chat With Your Docs
-          </h1>
-          <main className={styles.main}>
-            <div className={styles.cloud}>
-              <div ref={messageListRef} className={styles.messagelist}>
-                {messages.map((message, index) => {
-                  let className;
-                  if (message.type === 'apiMessage') {
-                    className = styles.apimessage;
-                  } else {
-                    // The latest message sent by the user will be animated while waiting for a response
-                    className =
-                      loading && index === messages.length - 1
-                        ? styles.usermessagewaiting
-                        : styles.usermessage;
-                  }
-                  return (
-                    <>
-                      <div key={`chatMessage-${index}`} className={className}>
-                        {message.type === 'apiMessage' ? (
-                          <BotAvatar />
-                        ) : (
-                          <UserAvatar />
-                        )}
-                        <div className={styles.markdownanswer}>
-                          <ReactMarkdown linkTarget="_blank">
-                            {message.message}
-                          </ReactMarkdown>
-                        </div>
-                      </div>
-                      {message.sourceDocs && (
-                        <div
-                          className="p-5"
-                          key={`sourceDocsAccordion-${index}`}
-                        >
-                          <Accordion
-                            type="single"
-                            collapsible
-                            className="flex-col"
-                          >
-                            {message.sourceDocs.map((doc, index) => (
-                              <div key={`messageSourceDocs-${index}`}>
-                                <AccordionItem value={`item-${index}`}>
-                                  <AccordionTrigger>
-                                    <h3>Source {index + 1}</h3>
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <ReactMarkdown linkTarget="_blank">
-                                      {doc.pageContent}
-                                    </ReactMarkdown>
-                                    <p className="mt-2">
-                                      <b>Source:</b> {doc.metadata.source}
-                                    </p>
-                                  </AccordionContent>
-                                </AccordionItem>
-                              </div>
-                            ))}
-                          </Accordion>
-                        </div>
+    <Layout>
+      <div className="mx-auto flex flex-col gap-4">
+        <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
+          Chat With Your Docs
+        </h1>
+        <main className={styles.main}>
+          <div className={styles.cloud}>
+            <div ref={messageListRef} className={styles.messagelist}>
+              {messages.map((message, index) => {
+                let className;
+                if (message.type === 'apiMessage') {
+                  className = styles.apimessage;
+                } else {
+                  // The latest message sent by the user will be animated while waiting for a response
+                  className =
+                    loading && index === messages.length - 1
+                      ? styles.usermessagewaiting
+                      : styles.usermessage;
+                }
+                return (
+                  <Fragment key={`chatMessage-${index}`}>
+                    <div className={className}>
+                      {message.type === 'apiMessage' ? (
+                        <BotAvatar />
+                      ) : (
+                        <UserAvatar />
                       )}
-                    </>
-                  );
-                })}
-              </div>
-            </div>
-            <div className={styles.center}>
-              <div className={styles.cloudform}>
-                <form onSubmit={handleSubmit}>
-                  <textarea
-                    disabled={loading}
-                    onKeyDown={handleEnter}
-                    ref={textAreaRef}
-                    autoFocus={false}
-                    rows={1}
-                    maxLength={512}
-                    id="userInput"
-                    name="userInput"
-                    placeholder={
-                      loading
-                        ? 'Waiting for response...'
-                        : 'What is this legal case about?'
-                    }
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className={styles.textarea}
-                  />
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className={styles.generatebutton}
-                  >
-                    {loading ? (
-                      <div className={styles.loadingwheel}>
-                        <LoadingDots color="#000" />
+                      <div className={styles.markdownanswer}>
+                        <ReactMarkdown linkTarget="_blank">
+                          {message.message}
+                        </ReactMarkdown>
                       </div>
-                    ) : (
-                      // Send icon SVG in input field
-                      <svg
-                        viewBox="0 0 20 20"
-                        className={styles.svgicon}
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
-                      </svg>
+                    </div>
+                    {message.sourceDocs && (
+                      <div className="p-5" key={`sourceDocsAccordion-${index}`}>
+                        <Accordion
+                          type="single"
+                          collapsible
+                          className="flex-col"
+                        >
+                          {message.sourceDocs.map((doc, index) => (
+                            <div key={`messageSourceDocs-${index}`}>
+                              <AccordionItem value={`item-${index}`}>
+                                <AccordionTrigger>
+                                  <h3>Source {index + 1}</h3>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <ReactMarkdown linkTarget="_blank">
+                                    {doc.pageContent}
+                                  </ReactMarkdown>
+                                  <p className="mt-2">
+                                    <b>Source:</b> {doc.metadata.source}
+                                  </p>
+                                </AccordionContent>
+                              </AccordionItem>
+                            </div>
+                          ))}
+                        </Accordion>
+                      </div>
                     )}
-                  </button>
-                </form>
-              </div>
+                  </Fragment>
+                );
+              })}
             </div>
-            {error && (
-              <div className="border border-red-400 rounded-md p-4">
-                <p className="text-red-500">{error}</p>
-              </div>
-            )}
-          </main>
-        </div>
-        <footer className="m-auto p-4">
-          <a href="https://twitter.com/mayowaoshin">
-            Powered by LangChainAI and Faiss. Demo built by Mayo (Twitter:
-            @mayowaoshin).
-          </a>
-        </footer>
-      </Layout>
-    </>
+          </div>
+          <div className={styles.center}>
+            <div className={styles.cloudform}>
+              <form onSubmit={handleSubmit}>
+                <textarea
+                  disabled={loading}
+                  onKeyDown={handleEnter}
+                  ref={textAreaRef}
+                  autoFocus={false}
+                  rows={1}
+                  maxLength={512}
+                  id="userInput"
+                  name="userInput"
+                  placeholder={
+                    loading
+                      ? 'Waiting for response...'
+                      : 'What is this legal case about?'
+                  }
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className={styles.textarea}
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={styles.generatebutton}
+                >
+                  {loading ? (
+                    <div className={styles.loadingwheel}>
+                      <LoadingDots color="#000" />
+                    </div>
+                  ) : (
+                    // Send icon SVG in input field
+                    <svg
+                      viewBox="0 0 20 20"
+                      className={styles.svgicon}
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                    </svg>
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+          {error && (
+            <div className="border border-red-400 rounded-md p-4">
+              <p className="text-red-500">{error}</p>
+            </div>
+          )}
+        </main>
+      </div>
+      <footer className="m-auto p-4">
+        <a href="https://twitter.com/mayowaoshin">
+          Powered by LangChainAI and Faiss. Demo built by Mayo (Twitter:
+          @mayowaoshin).
+        </a>
+      </footer>
+    </Layout>
   );
 }
