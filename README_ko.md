@@ -26,7 +26,7 @@ git clone https://github.com/anpigon/gpt4-pdf-chatbot-langchain-faiss.git
 
 2. 또는 ZIP 파일을 다운로드 합니다.
 
-![](https://i.imgur.com/rMThF2k.png)
+<img src="https://i.imgur.com/rMThF2k.png" width="300"/>
 
 
 3. 패키지 설치
