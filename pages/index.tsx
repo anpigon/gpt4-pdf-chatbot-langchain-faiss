@@ -13,6 +13,32 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
+const BotAvatar: React.FC = () => {
+  return (
+    <Image
+      src="/bot-image.png"
+      alt="AI"
+      width="40"
+      height="40"
+      className={styles.boticon}
+      priority
+    />
+  );
+};
+
+const UserAvatar: React.FC = () => {
+  return (
+    <Image
+      src="/usericon.png"
+      alt="Me"
+      width="30"
+      height="30"
+      className={styles.usericon}
+      priority
+    />
+  );
+};
+
 export default function Home() {
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -131,33 +157,10 @@ export default function Home() {
             <div className={styles.cloud}>
               <div ref={messageListRef} className={styles.messagelist}>
                 {messages.map((message, index) => {
-                  let icon;
                   let className;
                   if (message.type === 'apiMessage') {
-                    icon = (
-                      <Image
-                        key={index}
-                        src="/bot-image.png"
-                        alt="AI"
-                        width="40"
-                        height="40"
-                        className={styles.boticon}
-                        priority
-                      />
-                    );
                     className = styles.apimessage;
                   } else {
-                    icon = (
-                      <Image
-                        key={index}
-                        src="/usericon.png"
-                        alt="Me"
-                        width="30"
-                        height="30"
-                        className={styles.usericon}
-                        priority
-                      />
-                    );
                     // The latest message sent by the user will be animated while waiting for a response
                     className =
                       loading && index === messages.length - 1
@@ -167,7 +170,11 @@ export default function Home() {
                   return (
                     <>
                       <div key={`chatMessage-${index}`} className={className}>
-                        {icon}
+                        {message.type === 'apiMessage' ? (
+                          <BotAvatar />
+                        ) : (
+                          <UserAvatar />
+                        )}
                         <div className={styles.markdownanswer}>
                           <ReactMarkdown linkTarget="_blank">
                             {message.message}
@@ -262,7 +269,8 @@ export default function Home() {
         </div>
         <footer className="m-auto p-4">
           <a href="https://twitter.com/mayowaoshin">
-            Powered by LangChainAI and Faiss. Demo built by Mayo (Twitter: @mayowaoshin).
+            Powered by LangChainAI and Faiss. Demo built by Mayo (Twitter:
+            @mayowaoshin).
           </a>
         </footer>
       </Layout>
