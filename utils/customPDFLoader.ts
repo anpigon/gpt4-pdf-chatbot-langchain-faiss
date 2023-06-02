@@ -1,7 +1,7 @@
 import { Document } from 'langchain/document';
 import { readFile } from 'fs/promises';
 import { BaseDocumentLoader } from 'langchain/document_loaders';
-import { CharacterTextSplitter } from 'langchain/text_splitter';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
 export abstract class BufferLoader extends BaseDocumentLoader {
   constructor(public filePathOrBlob: string | Blob) {
@@ -36,10 +36,9 @@ export class CustomPDFLoader extends BufferLoader {
   ): Promise<Document[]> {
     const { pdf } = await PDFLoaderImports();
     const parsed = await pdf(raw);
-    const splitter = new CharacterTextSplitter({
-      separator: '. ',
+    const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
-      chunkOverlap: 0,
+      chunkOverlap: 200,
     });
     const rawDocs = new Document({
       pageContent: parsed.text,
